@@ -8,8 +8,9 @@ import androidx.room.PrimaryKey
 data class Currency(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "exchange") val exchange: String,
+    @ColumnInfo(name = "exchange") val exchange: String = "",
     @ColumnInfo(name = "amount") val amount: Float,
-    @ColumnInfo(name = "puchasePrice") val puchasePrice: Float,
-    @ColumnInfo(name = "currentPrice") var currentPrice: Float,
+    @ColumnInfo(name = "puchasePrice") val puchasePrice: Float = 0F,
+    @ColumnInfo(name = "currentPrice") var currentPrice: Float = 0F,
+    @ColumnInfo(name = "oldPrice") var oldPrice: Float = 0F,
 )

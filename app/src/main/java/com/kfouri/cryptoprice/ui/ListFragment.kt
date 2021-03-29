@@ -1,11 +1,14 @@
 package com.kfouri.cryptoprice.ui
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -25,14 +28,20 @@ import com.kfouri.cryptoprice.network.ApiBuilder
 import com.kfouri.cryptoprice.network.ApiHelper
 import com.kfouri.cryptoprice.viewmodel.ListViewModel
 import com.kfouri.cryptoprice.viewmodel.ViewModelFactory
+import kotlinx.android.synthetic.main.currency_item.view.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 
 class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
 
+    private val sharedPrefFile = "kotlinsharedpreference"
     private val TAG = "ListFragment"
     private lateinit var viewModel: ListViewModel
+
+    private val sharedPreferences by lazy {
+        activity?.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
+    }
 
     private val adapter by lazy { ListAdapter() { id: Int -> itemClicked(id) }}
 
@@ -61,8 +70,22 @@ class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
         viewModel.onCurrenciesList().observe(viewLifecycleOwner, Observer { list ->
             getCurrencies(list)
             val format: NumberFormat = NumberFormat.getCurrencyInstance()
-            textView_total.text = format.format(getTotal(list))
+            val oldTotal = getOldTotal()
+            val currentTotal = getTotal(list)
+            textView_total.text = format.format(currentTotal)
             swipeRefreshLayout.isRefreshing = false
+
+            if (oldTotal > currentTotal) {
+                imageView_diffPrice.setImageDrawable(activity?.applicationContext?.let {
+                    ContextCompat.getDrawable(
+                        it,R.drawable.ic_arrow_down)
+                })
+            } else {
+                imageView_diffPrice.setImageDrawable(activity?.applicationContext?.let {
+                    ContextCompat.getDrawable(
+                        it,R.drawable.ic_arrow_up)
+                })
+            }
         })
 
         if (adapter.itemCount == 0) {
@@ -89,24 +112,13 @@ class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
         })
 
         buttonAdd.setOnClickListener {
-
             val dialog = NewCurrencyDialog(this)
             dialog.show(requireActivity().supportFragmentManager, "Crypto")
-
-            /*
-            viewModel.insertNewCurrency(Currency(0, "BTC", "Kraken", 1F, 10F, 0F))
-            viewModel.insertNewCurrency(Currency(0, "KAFU", "Kraken", 2F, 15F, 0F))
-            viewModel.insertNewCurrency(Currency(0, "ETH", "Kraken", 10F, 1F, 0f))
-            viewModel.insertNewCurrency(Currency(0, "ETH", 3F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "BNB", 4F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "ADA", 5F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "UNI", 6F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "LUNA", 7F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "XRP", 8F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "BCN", 9F, "Kraken", 0F, 1F))
-            viewModel.insertNewCurrency(Currency(0, "SOL", 10F, "Kraken", 0F, 1F))
-             */
         }
+    }
+
+    private fun getOldTotal(): Float {
+        return sharedPreferences?.getFloat("oldTotal",0F)?: 0F
     }
 
     private fun getTotal(list: ArrayList<Currency>): Float {
@@ -114,6 +126,11 @@ class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
         list.forEach {
             total += it.amount * it.currentPrice
         }
+
+        val editor: SharedPreferences.Editor? =  sharedPreferences?.edit()
+        editor?.putFloat("oldTotal", total)
+        editor?.apply()
+        editor?.commit()
 
         return total
     }
@@ -192,7 +209,7 @@ class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
     }
 
     override fun receiveData(name: String, exchange: String, amount: Float, purchasePrice: Float) {
-        val currency = Currency(0, name, exchange, amount, purchasePrice, 0F)
+        val currency = Currency(0, name, exchange, amount, purchasePrice)
 
         lifecycleScope.launch {
             (dbHelper as DatabaseHelper).insertCurrency(currency)

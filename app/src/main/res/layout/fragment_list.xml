@@ -19,6 +19,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/imageView_diffPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        tools:src="@drawable/ic_arrow_up"
+        app:layout_constraintBottom_toBottomOf="@+id/textView_total"
+        app:layout_constraintEnd_toStartOf="@+id/textView_total"
+        app:layout_constraintTop_toTopOf="@+id/textView_total" />
+
     <TextView
         android:id="@+id/textView_total"
         android:layout_width="wrap_content"

@@ -44,7 +44,9 @@ class ListViewModel(private val apiRepository: ApiRepository, private val databa
             }
 
             list.forEach {
+                it.oldPrice = it.currentPrice
                 it.currentPrice = apiRepository.getCurrencyPrice(it.name).usdt
+                databaseHelper.updateCurrency(it)
             }
             currenciesListLiveData.postValue(list)
         }

@@ -1,9 +1,15 @@
 package com.kfouri.cryptoprice.adapter
 
+import android.content.Context
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.recyclerview.widget.RecyclerView
 import com.kfouri.cryptoprice.R
 import com.kfouri.cryptoprice.database.model.Currency
@@ -42,16 +48,30 @@ class ListAdapter(private val clickListener: (Int) -> Unit) : RecyclerView.Adapt
             itemView.textView_currencyName.text = item.name
             itemView.textView_currencyAmount.text = item.amount.toString()
             itemView.textView_currencyExchange.text = item.exchange
-            itemView.textView_purchasePrice.text = format.format(item.puchasePrice)
+            itemView.textView_purchasePrice.text = item.puchasePrice.toString()
             itemView.textView_currencyInitialTotal.text = format.format(item.puchasePrice * item.amount)
             if (item.currentPrice == 0F) {
                 itemView.textview_currencyCurrentPrice.text = "N/A"
                 itemView.textView_currencyCurrentTotal.text = "--.-"
                 itemView.textView_winlossTotal.text = "--.-"
             } else {
-                itemView.textview_currencyCurrentPrice.text = format.format(item.currentPrice)
+                itemView.textview_currencyCurrentPrice.text = item.currentPrice.toString()
                 itemView.textView_currencyCurrentTotal.text = format.format(item.amount * item.currentPrice)
-                itemView.textView_winlossTotal.text = format.format(item.amount * item.currentPrice - item.amount * item.puchasePrice)
+                val winloss = item.amount * item.currentPrice - item.amount * item.puchasePrice
+                itemView.textView_winlossTotal.text = format.format(winloss)
+
+                if (winloss > 0) {
+                    itemView.textView_winlossTotal.setTextColor(Color.parseColor("#00A973"))
+                } else {
+                    itemView.textView_winlossTotal.setTextColor(Color.parseColor("#A90017"))
+                }
+
+                if (item.oldPrice > item.currentPrice) {
+                    itemView.imageView_diffPrice.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_arrow_down))
+                } else {
+                    itemView.imageView_diffPrice.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_arrow_up))
+                }
+
             }
 
             itemView.setOnClickListener { clickListener(item.id) }
