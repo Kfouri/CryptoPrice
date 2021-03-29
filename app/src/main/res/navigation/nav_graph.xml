@@ -9,19 +9,19 @@
         android:name="com.kfouri.cryptoprice.ui.ListFragment"
         android:label="fragment_list"
         tools:layout="@layout/fragment_list" >
-        <!--
         <action
             android:id="@+id/action_open_detail"
             app:destination="@id/detailFragment" />
+        <!--
         <action
             android:id="@+id/action_open_search"
             app:destination="@id/searchFragment" />
             -->
     </fragment>
-    <!--
+
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.kfouri.brutest.ui.DetailFragment"
+        android:name="com.kfouri.cryptoprice.ui.DetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" >
         <action
@@ -29,8 +29,9 @@
             app:destination="@id/listFragment" />
         <argument
             android:name="ID"
-            app:argType="long" />
+            app:argType="integer" />
     </fragment>
+    <!--
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.kfouri.brutest.ui.SearchFragment"

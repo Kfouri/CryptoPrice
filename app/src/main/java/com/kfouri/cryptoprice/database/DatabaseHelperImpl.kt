@@ -6,7 +6,7 @@ class DatabaseHelperImpl(private val appDatabase: AppDatabase): DatabaseHelper {
 
     override suspend fun getAllCurrencies(): List<Currency> = appDatabase.currencyDao().getAllCurrencies()
 
-    override suspend fun getCurrency(name: String): Currency = appDatabase.currencyDao().getCurrency(name)
+    override suspend fun getCurrency(id: Int): Currency = appDatabase.currencyDao().getCurrency(id)
 
     override suspend fun insertCurrency(currency: Currency) = appDatabase.currencyDao().insertCurrency(currency)
 

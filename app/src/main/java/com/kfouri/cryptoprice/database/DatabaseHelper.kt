@@ -7,7 +7,7 @@ interface DatabaseHelper {
 
     suspend fun getAllCurrencies(): List<Currency>
 
-    suspend fun getCurrency(name: String): Currency
+    suspend fun getCurrency(id: Int): Currency
 
     suspend fun insertCurrency(currency: Currency)
 

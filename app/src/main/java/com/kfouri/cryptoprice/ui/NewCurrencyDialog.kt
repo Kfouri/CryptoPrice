@@ -23,15 +23,7 @@ class NewCurrencyDialog(val newCryptoCreated: NewCryptoCreated): DialogFragment(
                 // Add action buttons
                 .setTitle("Nueva Moneda")
                 .setPositiveButton(R.string.dialog_create) { dialog, id ->
-/*
-                    val name = view.editText_currencyName.text.toString()
-                    val exchange = view.editText_currencyExchange.text.toString()
-                    val amount = view.editText_currencyAmount.text.toString().toFloat()
-                    val purchasePrice = view.editText_currencyPurchasePrice.text.toString().toFloat()
 
-                    newCryptoCreated.receiveData(name, exchange, amount, purchasePrice)
-
- */
                 }
                 .setNegativeButton(R.string.dialog_cancel) { _, _ ->
                     dialog?.cancel()

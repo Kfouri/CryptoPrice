@@ -3,7 +3,6 @@ package com.kfouri.cryptoprice.ui
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +27,6 @@ import com.kfouri.cryptoprice.network.ApiBuilder
 import com.kfouri.cryptoprice.network.ApiHelper
 import com.kfouri.cryptoprice.viewmodel.ListViewModel
 import com.kfouri.cryptoprice.viewmodel.ViewModelFactory
-import kotlinx.android.synthetic.main.currency_item.view.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -203,9 +201,8 @@ class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
     }
 
     private fun itemClicked(id: Int) {
-        //val action = ListFragmentDirections.actionOpenDetail(id)
-        //findNavController().navigate(action)
-        Log.d("Kafu", "Click Item ID: " + id)
+        val action = ListFragmentDirections.actionOpenDetail(id)
+        findNavController().navigate(action)
     }
 
     override fun receiveData(name: String, exchange: String, amount: Float, purchasePrice: Float) {
