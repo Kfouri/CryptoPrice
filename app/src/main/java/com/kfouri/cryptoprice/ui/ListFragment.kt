@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.ads.AdRequest
 import com.kfouri.cryptoprice.R
 import com.kfouri.cryptoprice.adapter.ListAdapter
 import com.kfouri.cryptoprice.database.DatabaseBuilder
@@ -99,6 +100,11 @@ class ListFragment: Fragment(), NewCurrencyDialog.NewCryptoCreated {
         super.onViewCreated(view, savedInstanceState)
 
         progressBar.visibility = View.VISIBLE
+
+        val adRequest = AdRequest.Builder().build()
+
+        adView.loadAd(adRequest)
+
         viewModel.getAllCurrencies()
 
         swipeRefreshLayout.setOnRefreshListener {
