@@ -60,18 +60,22 @@ class ListAdapter(private val clickListener: (Int) -> Unit) : RecyclerView.Adapt
                 val winloss = item.amount * item.currentPrice - item.amount * item.puchasePrice
                 itemView.textView_winlossTotal.text = format.format(winloss)
 
-                if (winloss > 0) {
+                if (winloss >= 0) {
                     itemView.textView_winlossTotal.setTextColor(Color.parseColor("#00A973"))
                 } else {
                     itemView.textView_winlossTotal.setTextColor(Color.parseColor("#A90017"))
                 }
 
-                if (item.oldPrice > item.currentPrice) {
-                    itemView.imageView_diffPrice.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_arrow_down))
+                if (item.oldPrice != item.currentPrice) {
+                    itemView.imageView_diffPrice.visibility = View.VISIBLE
+                    if (item.oldPrice > item.currentPrice) {
+                        itemView.imageView_diffPrice.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_arrow_down))
+                    } else {
+                        itemView.imageView_diffPrice.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_arrow_up))
+                    }
                 } else {
-                    itemView.imageView_diffPrice.setImageDrawable(getDrawable(itemView.context, R.drawable.ic_arrow_up))
+                    itemView.imageView_diffPrice.visibility = View.GONE
                 }
-
             }
 
             itemView.setOnClickListener { clickListener(item.id) }

@@ -13,32 +13,13 @@ class ListViewModel(private val apiRepository: ApiRepository, private val databa
 
     private val currenciesListLiveData = MutableLiveData<ArrayList<Currency>>()
 
-    /*
-    fun getMovies(page: Long) = liveData(Dispatchers.IO) {
-        emit(Resource.loading(data = null))
-        try {
-            emit(Resource.success(data = apiRepository.getMovies(page)))
-        } catch (e: Exception) {
-            emit(Resource.error(data = null, message = e.message ?: "Error getting movies..."))
-        }
-    }
-
-    fun getGenres() = liveData(Dispatchers.IO) {
-        emit(Resource.loading(data = null))
-        try {
-            emit(Resource.success(data = apiRepository.getGenres()))
-        } catch (e: Exception) {
-            emit(Resource.error(data = null, message = e.message ?: "Error getting genres..."))
-        }
-    }
-
-     */
-
     fun getAllCurrencies() {
+        Log.d("Kafu", "getAllCurrencies()")
         viewModelScope.launch {
             var list = ArrayList<Currency>()
             try {
                 list = databaseHelper.getAllCurrencies() as ArrayList<Currency>
+                //Log.d("Kafu", "CURR: "+list.toString())
             } catch (e: Exception) {
                 Log.d("Kafu", "Database empty")
             }
@@ -48,7 +29,7 @@ class ListViewModel(private val apiRepository: ApiRepository, private val databa
                 it.currentPrice = apiRepository.getCurrencyPrice(it.name).usdt
                 databaseHelper.updateCurrency(it)
             }
-            currenciesListLiveData.postValue(list)
+            currenciesListLiveData.value = list
         }
     }
 
@@ -56,6 +37,7 @@ class ListViewModel(private val apiRepository: ApiRepository, private val databa
         viewModelScope.launch {
             try {
                 databaseHelper.insertCurrency(currency)
+                Log.d("Kafu", "Insert viewModel.getAllCurrencies()")
                 getAllCurrencies()
             } catch (e: Exception) {
                 Log.d("Kafu", "Error Insert: "+e.message)
@@ -63,6 +45,6 @@ class ListViewModel(private val apiRepository: ApiRepository, private val databa
         }
     }
 
-    fun onCurrenciesList(): LiveData<ArrayList<Currency>> = currenciesListLiveData
+    fun onCurrenciesList() = currenciesListLiveData as LiveData<ArrayList<Currency>>
 
 }
